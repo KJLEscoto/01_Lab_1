@@ -58,7 +58,7 @@ async function handleLogin() {
 
     if (response.data) {
       localStorage.setItem('_token', response.data.token);
-      navigateTo('/dashboard');
+      navigateTo('/viewUsers');
     }
   }
   catch (error) {
