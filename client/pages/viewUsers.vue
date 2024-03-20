@@ -28,8 +28,17 @@
     </div>
 
     <div v-else>
-      <div class="flex text-black items-center justify-center h-[90vh]">
-        <p>Oops... Please <nuxt-link class="text-blue-500 font-bold" to="/">log in </nuxt-link>to access this page.</p>
+      <div class="flex items-center justify-center h-screen cursor-default">
+        <div class="text-white tracking-wider text-center">
+          <img class="m-auto mb-3 rounded w-auto h-40 shadow" src="assets/img/wolf.avif" alt="Error">
+          <p class="text-2xl font-bold mb-1">Oops, Access denied :( </p>
+          <p>Please use valid credentials to access this page.</p>
+          <button
+            class="mt-2 px-4 py-2 bg-[#636363] rounded tracking-wider font-semibold shadow hover:bg-[#9e9e9e] duration-200"><nuxt-link
+              to="/">GO
+              TO
+              LOGIN</nuxt-link></button>
+        </div>
       </div>
     </div>
 
@@ -37,7 +46,6 @@
 </template>
 
 <script setup>
-import { useRouter, useRoute } from 'vue-router';
 
 const { data: users } = await useFetch('http://127.0.0.1:8000/api/getUsers');
 const isAuthenticated = ref(false);
@@ -55,7 +63,7 @@ function logout() {
   if (confirm("Are you sure you want to log out?")) {
     localStorage.removeItem('_token');
     isAuthenticated.value = false;
-    router.push('/'); // Assuming the login route is '/login', change it accordingly
+    router.push('/');
   }
 }
 

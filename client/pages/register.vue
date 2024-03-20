@@ -28,7 +28,7 @@
           <p v-if="state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.password"
             class="text-[#ff7765] text-sm tracking-wide font-medium">{{ state.errors._data.errors.password[0] }}</p>
         </div>
-        <button type="submit" class="w-full px-4 py-2 text-white bg-[#687c8d] rounded">
+        <button type="submit" class="w-full px-4 py-2 text-white bg-[#687c8d] rounded hover:bg-[#8495a3]">
           Register
         </button>
         <div class="flex text-center">
@@ -75,4 +75,3 @@ async function handleRegister() {
   }
 }
 </script>
-
