@@ -57,14 +57,12 @@ class AuthController extends Controller
 
     public function getUsers() 
     {
-        $users = User::all();
+        $users = User::all()->toArray();
 
-        if ($users->count() > 0) {
-            return response()->json(['users' => $users]);
+        if (!empty($users)) {
+            return response()->json($users);
         } else {
-            return response()->json([
-                'users' => 'No users Found'
-            ]);
+            return response()->json([]);
         }
     }
 
