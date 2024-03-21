@@ -34,7 +34,7 @@
           <p class="text-2xl font-bold mb-1">Oops, Access denied :( </p>
           <p>Please use valid credentials to access this page.</p>
           <button
-            class="mt-2 px-4 py-2 bg-[#4b5a67] rounded tracking-wider font-semibold shadow hover:bg-[#596b7a] duration-200"><nuxt-link
+            class="mt-2 px-6 py-2 bg-[#4b5a67] rounded tracking-wider font-semibold shadow hover:bg-[#596b7a] duration-200"><nuxt-link
               to="/">GO
               TO
               LOGIN</nuxt-link></button>
