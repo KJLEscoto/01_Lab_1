@@ -6,11 +6,14 @@
       <form @submit.prevent="handleLogin" class="space-y-4">
         <div>
           <label for="email" class="block mb-1">Email</label>
-          <input type="email" id="email" v-model="state.user.email" placeholder="Enter your email"
-            :class="{ 'border-red-500': state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.email }"
+          <input id="email" v-model="state.user.email" placeholder="Enter your email"
+            :class="{ 'border-red-500': state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.email && v$.user.email.$errors }"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#687c8d]">
           <p v-if="state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.email"
             class="text-[#ff7765] text-sm tracking-wide font-medium">{{ state.errors._data.errors.email[0] }}</p>
+          <p v-else-if="v$.user.email.$errors && v$.user.email.$errors.length > 0"
+            class="text-[#ff7765] text-sm tracking-wide font-medium">{{
+        v$.user.email.$errors[0].$message }}</p>
         </div>
         <div>
           <label for="password" class="block mb-1">Password</label>
@@ -20,7 +23,7 @@
           <p v-if="state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.password"
             class="text-[#ff7765] text-sm tracking-wide font-medium">{{ state.errors._data.errors.password[0] }}</p>
         </div>
-        <button type="submit" class="w-full px-4 py-2 text-white bg-[#687c8d] rounded hover:bg-[#8495a3]">
+        <button type="submit" class="w-full px-4 py-2 text-white bg-[#687c8d] rounded hover:bg-[#8495a3] duration-200">
           Login
         </button>
         <div class="flex text-center">
@@ -33,8 +36,8 @@
 </template>
 
 <script setup>
-
-// main color = #8ea9bf
+import useVuelidate from '@vuelidate/core';
+import { required, email } from '@vuelidate/validators';
 
 const state = reactive({
   errors: null,
@@ -42,7 +45,16 @@ const state = reactive({
     email: null,
     password: null,
   }
-})
+});
+
+const rules = {
+  user: {
+    email: { required, email },
+    password: { required }
+  }
+};
+
+const v$ = useVuelidate(rules, state);
 
 async function handleLogin() {
   const params = {
@@ -50,16 +62,20 @@ async function handleLogin() {
     password: state.user.password,
   }
 
+  const result = await v$.value.$validate();
+
   try {
     const response = await $fetch(`http://127.0.0.1:8000/api/auth/login`, {
       method: 'POST',
       body: params
     })
 
-    if (response.data) {
-      localStorage.setItem('_token', response.data.token);
-      alert('Signing you in...');
-      navigateTo('/viewUsers');
+    if (result) {
+      if (response.data) {
+        localStorage.setItem('_token', response.data.token);
+        alert('Signing you in...');
+        navigateTo('/viewUsers');
+      }
     }
   }
   catch (error) {
