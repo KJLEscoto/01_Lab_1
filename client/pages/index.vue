@@ -7,28 +7,26 @@
         <div>
           <label for="email" class="block mb-1">Email</label>
           <input id="email" v-model="state.user.email" placeholder="Enter your email"
-            :class="{ 'border-red-500': state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.email && v$.user.email.$errors }"
+            :class="{ 'border-red-500': (state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.email && v$.user.email.$errors) || (v$.user.email.$errors && v$.user.email.$errors.length > 0) }"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#687c8d]">
-
-          <!-- wala ko kabalo sir kung sa BE or FE na error i display hahaha gi if-else nlng nako -->
-
-          <p v-if="state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.email"
-            class="text-[#ff7765] text-sm tracking-wide font-medium">{{ state.errors._data.errors.email[0] }}</p>
-          <p v-else-if="v$.user.email.$errors && v$.user.email.$errors.length > 0"
+          <p v-if="v$.user.email.$errors && v$.user.email.$errors.length > 0"
             class="text-[#ff7765] text-sm tracking-wide font-medium">{{
         v$.user.email.$errors[0].$message }}</p>
+          <p v-else-if="state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.email"
+            class="text-[#ff7765] text-sm tracking-wide font-medium">{{ state.errors._data.errors.email[0] }}</p>
         </div>
 
         <div>
           <label for="password" class="block mb-1">Password</label>
           <input type="password" id="password" v-model="state.user.password" placeholder="Enter your password"
-            :class="{ 'border-red-500': state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.password }"
+            :class="{ 'border-red-500': (state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.password) || (v$.user.password.$errors && v$.user.password.$errors.length > 0) }"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#687c8d]">
-          <p v-if="state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.password"
-            class="text-[#ff7765] text-sm tracking-wide font-medium">{{ state.errors._data.errors.password[0] }}</p>
-          <p v-else-if="v$.user.password.$errors && v$.user.password.$errors.length > 0"
+
+          <p v-if="v$.user.password.$errors && v$.user.password.$errors.length > 0"
             class="text-[#ff7765] text-sm tracking-wide font-medium">{{
         v$.user.password.$errors[0].$message }}</p>
+          <p v-else-if="state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.password"
+            class="text-[#ff7765] text-sm tracking-wide font-medium">{{ state.errors._data.errors.password[0] }}</p>
         </div>
         <button type="submit" class="w-full px-4 py-2 text-white bg-[#687c8d] rounded hover:bg-[#8495a3] duration-200">
           Login
@@ -45,7 +43,7 @@
 <script setup>
 import { reactive, computed } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import { required, email } from '@vuelidate/validators';
+import { required, email, helpers } from '@vuelidate/validators';
 
 const state = reactive({
   errors: null,
@@ -58,8 +56,13 @@ const state = reactive({
 const rules = computed(() => {
   return {
     user: {
-      email: { required, email },
-      password: { required }
+      email: {
+        required: helpers.withMessage('Please enter your email.', required),
+        email: helpers.withMessage('Please enter a valid email address.', email)
+      },
+      password: {
+        required: helpers.withMessage('Please enter your password.', required)
+      }
     }
   }
 })
@@ -75,12 +78,12 @@ async function handleLogin() {
   const result = await v$.value.$validate();
 
   try {
-    const response = await $fetch(`http://127.0.0.1:8000/api/auth/login`, {
-      method: 'POST',
-      body: params
-    })
-
     if (result) {
+      const response = await $fetch(`http://127.0.0.1:8000/api/auth/login`, {
+        method: 'POST',
+        body: params
+      })
+
       if (response.data) {
         localStorage.setItem('_token', response.data.token);
         alert('Signing you in...');
