@@ -42,6 +42,7 @@
         <button type="submit" class="w-full px-4 py-2 text-white bg-[#687c8d] rounded hover:bg-[#8495a3] duration-200">
           Register
         </button>
+
         <div class="flex text-center">
           <nuxt-link to="/" class="m-auto text-[#99b1c5] text-sm hover:underline">Already registered? Login
             here.</nuxt-link>
